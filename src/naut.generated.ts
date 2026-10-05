@@ -6,25 +6,34 @@
  * here is lost, and `registry-stale` is what reports one that has not been made yet.
  */
 
+import Contact, { schema as contactSchema } from './components/Contact.astro'
 import Hero, { schema as heroSchema } from './components/Hero.astro'
 import Page, { schema as pageSchema } from './components/Page.astro'
 import Products, { schema as productsSchema } from './components/Products.astro'
 import Prose, { schema as proseSchema } from './components/Prose.astro'
+import Services, { schema as servicesSchema } from './components/Services.astro'
+import Testimonials, { schema as testimonialsSchema } from './components/Testimonials.astro'
 
 /** Every Type in the project, keyed by the name a Placement’s `_type` carries. */
 export const registry = {
+  contact: Contact,
   hero: Hero,
   page: Page,
   products: Products,
   prose: Prose,
+  services: Services,
+  testimonials: Testimonials,
 }
 
 /** Every Type as the Reader takes it: the schema its component exports, and where it came from. */
 export const types = [
+  { ...contactSchema, name: 'contact', file: 'src/components/Contact.astro' },
   { ...heroSchema, name: 'hero', file: 'src/components/Hero.astro' },
   { ...pageSchema, name: 'page', file: 'src/components/Page.astro' },
   { ...productsSchema, name: 'products', file: 'src/components/Products.astro' },
   { ...proseSchema, name: 'prose', file: 'src/components/Prose.astro' },
+  { ...servicesSchema, name: 'services', file: 'src/components/Services.astro' },
+  { ...testimonialsSchema, name: 'testimonials', file: 'src/components/Testimonials.astro' },
 ]
 
 /** Every slot in the project. Types a consumer that names one; never a Type’s own `fits`. */
@@ -34,9 +43,12 @@ export type SlotId =
 declare global {
   /** Every Type the generator found, keyed by name and valued by the schema its component exports. */
   interface NautTypes {
+    contact: typeof contactSchema
     hero: typeof heroSchema
     page: typeof pageSchema
     products: typeof productsSchema
     prose: typeof proseSchema
+    services: typeof servicesSchema
+    testimonials: typeof testimonialsSchema
   }
 }

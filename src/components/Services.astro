@@ -1,0 +1,44 @@
+---
+import { defineSchema, repeat, text, type InferProps } from 'nautcms'
+
+export const schema = defineSchema({
+  fits: ['page.body'],
+  fields: {
+    heading: text(),
+    items: repeat({
+      title: text(),
+      text: text({ multiline: true }),
+      price: text(),
+    }),
+  },
+})
+
+type Props = InferProps<typeof schema>
+
+const { heading, items = [] } = Astro.props
+---
+
+<section class="wrap">
+  <h2 class="heading">{heading}</h2>
+  <ul>
+    {
+      items.map((item) => (
+        <li>
+          <h3>{item.title}</h3>
+          <p>{item.text}</p>
+          <span class="price">{item.price}</span>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  section { padding-top: 56px; padding-bottom: 64px; }
+  ul { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0 40px; margin-top: 22px; list-style: none; padding: 0; }
+  li { padding-top: 20px; border-top: 1px solid var(--color-rule); }
+  h3 { font-family: var(--font-serif); font-size: 24px; font-weight: 500; line-height: 1.1; }
+  p { margin-top: 8px; font-size: 14px; line-height: 1.6; color: var(--color-ink-soft); }
+  .price { display: block; margin-top: 12px; font-family: var(--font-serif); font-style: italic; font-size: 20px; color: var(--color-raspberry); }
+  @media (max-width: 640px) { ul { gap: 28px; } }
+</style>

@@ -1,0 +1,73 @@
+---
+import { defineSchema, repeat, text, type InferProps } from 'nautcms'
+import Sprig from './Sprig.astro'
+
+export const schema = defineSchema({
+  fits: ['page.body'],
+  fields: {
+    heading: text(),
+    quotes: repeat({
+      quote: text({ multiline: true }),
+      name: text(),
+    }),
+  },
+})
+
+type Props = InferProps<typeof schema>
+
+const { heading, quotes = [] } = Astro.props
+const [first, ...rest] = quotes
+---
+
+<section>
+  <Sprig kind="spray" class="spray top" />
+  <Sprig kind="spray" class="spray bottom" />
+  <div class="wrap">
+    <h2 class="heading">{heading}</h2>
+    {
+      first && (
+        <figure class="pull">
+          <blockquote>&ldquo;{first.quote}&rdquo;</blockquote>
+          <figcaption>{first.name}</figcaption>
+        </figure>
+      )
+    }
+    {
+      rest.length > 0 && (
+        <div class="rest">
+          {rest.map((q) => (
+            <figure>
+              <blockquote>&ldquo;{q.quote}&rdquo;</blockquote>
+              <figcaption>{q.name}</figcaption>
+            </figure>
+          ))}
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  section { position: relative; overflow: hidden; padding: 64px 0 60px; background: var(--color-sugar); border-block: 1px solid var(--color-rule); }
+  h2 { margin-bottom: 26px; text-align: center; font-size: 24px; color: var(--color-ink-soft); }
+  figure { margin: 0; }
+  .pull { max-width: 760px; margin-inline: auto; text-align: center; }
+  .pull blockquote { font-family: var(--font-serif); font-style: italic; font-size: 40px; line-height: 1.14; letter-spacing: -0.012em; text-wrap: balance; }
+  figcaption { margin-top: 16px; font-size: 13px; color: var(--color-ink-soft); }
+  figcaption::before { content: ''; display: inline-block; width: 22px; height: 1px; margin-right: 10px; vertical-align: middle; background: var(--color-raspberry); }
+  .rest { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; max-width: 760px; margin: 46px auto 0; padding-top: 34px; border-top: 1px solid var(--color-rule); }
+  .rest blockquote { font-family: var(--font-serif); font-size: 21px; line-height: 1.32; }
+  .rest figcaption { margin-top: 10px; }
+  .spray { position: absolute; width: 150px; height: 150px; }
+  .top { left: -10px; top: -30px; }
+  .bottom { right: -10px; bottom: -40px; transform: rotate(160deg); }
+
+  @media (min-width: 1200px) {
+    .pull, .rest { max-width: 900px; }
+    .pull blockquote { font-size: 52px; }
+  }
+  @media (max-width: 640px) {
+    .pull blockquote { font-size: 30px; }
+    .rest { grid-template-columns: 1fr; gap: 28px; }
+  }
+</style>
