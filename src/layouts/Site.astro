@@ -1,0 +1,95 @@
+---
+/**
+ * **The one place this site writes a head tag.** `init` wrote this file once and the site owns it
+ * from here: a tracking snippet, an `og:type`, a font preload or a different title suffix is an
+ * edit in this file rather than an override path somebody has to know exists.
+ *
+ * Every page the CMS serves is rendered inside it. The six props are resolved once, in the route the
+ * CMS injects, out of the Entry's `_seo` block and two structural fallbacks — so a page nobody has
+ * typed SEO into still has a title and something to share, and none of it is written into that
+ * page's file.
+ *
+ * Two things here are this site's rather than the CMS's, and both are literal on purpose: the name
+ * after every page title, and what a page with no image of its own shares.
+ *
+ * The canonical and `og:url` lines are load-bearing and nothing checks them — `naut check` reads
+ * files and cannot read markup — so deleting either is a page that quietly says the wrong thing
+ * about itself.
+ */
+
+// This site's stylesheet, and the one place its CSS loads: every page the site serves is rendered
+// in this file. Add a second sheet as an `@import` inside this one rather than a second import
+// here — a Tailwind sheet opens with `@import "tailwindcss"`, so two imports are two copies of the
+// framework's theme, and the second silently replaces the `@theme` the first declared.
+import '../styles/global.css'
+
+import { getPath, getSingleton, type ResolvedSeo } from 'nautcms/content'
+
+type Props = ResolvedSeo
+
+const { title, description, image, noindex, canonical, ogUrl } = Astro.props
+
+/** This site's name, after every page's own title. */
+const siteName = 'Nautilicious'
+
+/**
+ * What gets shared. The CMS resolves it: an Asset's Key carries no hostname, so `image` arrives
+ * root-relative for a committed one and at the bucket's origin for a site whose media moved there —
+ * which is one line in `astro.config.mjs` and no edit here.
+ *
+ * A page that places no image shares none. Put a file under `public/` and use its path as the
+ * fallback here to give every page one.
+ */
+const share = image === undefined ? undefined : new URL(image, Astro.site ?? Astro.url)
+
+/**
+ * **The site's chrome.** The CMS opens its read around this file, so this answers on every page of
+ * the build and inside every preview, and it is one Entry rather than an array of one because a
+ * header is a Type that says `singleton: true`.
+ *
+ * `null` until that Type exists and an editor has made its one Entry, so a fresh install renders no
+ * header and builds clean. Write `src/components/Header.astro` with the fields your chrome needs,
+ * fill it in, and edit the markup below to match — this line does not change.
+ */
+const header = await getSingleton('header')
+
+/**
+ * **Which page is being rendered**, which is the one thing the chrome cannot read off its own
+ * props: it is rendered beside every page at once and is handed the fields of none of them. The nav
+ * below is what it is for — `aria-current` on the item whose address is the page you are on.
+ *
+ * `Astro.url.pathname` is what this replaces and it is wrong exactly where a nav is looked at
+ * most: inside the CMS a page is previewed at `/_cms/preview/<id>` on the admin's host, so a nav
+ * built on it marks nothing current on any page an editor opens. This is the page's own Path in
+ * both places, and it is the same string a link pointing at that page resolves to — so a nav read
+ * out of content compares `link.href === here` and needs no normalising of its own.
+ */
+const here = await getPath()
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title === undefined ? siteName : `${title} | ${siteName}`}</title>
+    {description !== undefined && <meta name="description" content={description} />}
+    {share !== undefined && <meta property="og:image" content={share.href} />}
+    {noindex && <meta name="robots" content="noindex" />}
+    {canonical !== undefined && <link rel="canonical" href={canonical} />}
+    {ogUrl !== undefined && <meta property="og:url" content={ogUrl} />}
+  </head>
+  <body>
+    {
+      header !== null && (
+        <header>
+          {header.tagline}
+          <nav>
+            <a href="/" aria-current={here === '/' ? 'page' : undefined}>Home</a>
+          </nav>
+        </header>
+      )
+    }
+    <slot />
+  </body>
+</html>

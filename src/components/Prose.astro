@@ -1,0 +1,21 @@
+---
+import { defineSchema, richText, text, type InferProps } from 'nautcms'
+import RichText from 'nautcms/content/RichText.astro'
+
+// Adopt it by adding `fits: ['page.body']`.
+export const schema = defineSchema({
+  fields: {
+    heading: text().optional(),
+    body: richText(),
+  },
+})
+
+type Props = InferProps<typeof schema>
+
+const { heading, body } = Astro.props
+---
+
+<section>
+  {heading !== undefined && <h2>{heading}</h2>}
+  <RichText value={body} />
+</section>
