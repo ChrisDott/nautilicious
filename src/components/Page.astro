@@ -1,4 +1,5 @@
 ---
+// The page Type. Every file in src/content is one, and Editors stack blocks into its body.
 import { defineSchema, slot, text, type InferProps } from 'nautcms'
 import Placements from 'nautcms/content/Placements.astro'
 
@@ -12,10 +13,9 @@ export const schema = defineSchema({
 
 type Props = InferProps<typeof schema>
 
-const { title, body, path } = Astro.props
+const { body, path } = Astro.props
 ---
 
 <main data-path={path}>
-  <h1>{title}</h1>
   <Placements value={body} />
 </main>

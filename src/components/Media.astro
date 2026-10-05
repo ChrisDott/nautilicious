@@ -1,0 +1,18 @@
+---
+// An ordinary component, not a Type: it has no schema, so Editors never see it.
+// Spread an image() field into it. Committed media is served from public/. A Draft can hold an
+// image with no file chosen yet, which renders as nothing.
+import type { HTMLAttributes } from 'astro/types'
+
+type Props = Omit<HTMLAttributes<'img'>, 'width' | 'height'> & {
+  key?: string
+  alt?: string
+  decorative?: boolean
+  width?: number
+  height?: number
+}
+
+const { key, alt = '', decorative, width, height, ...rest } = Astro.props
+---
+
+{key && <img src={`/${key}`} alt={decorative ? '' : alt} width={width} height={height} loading="lazy" decoding="async" {...rest} />}

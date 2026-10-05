@@ -1,0 +1,51 @@
+---
+// The shop's pressed flowers, drawn in pine. `kind="sprig"` stands beside a photo, `kind="spray"`
+// sits in a corner. Decoration only, so it has no schema.
+import type { HTMLAttributes } from 'astro/types'
+
+type Props = HTMLAttributes<'svg'> & { kind?: 'sprig' | 'spray' }
+
+const { kind = 'sprig', ...rest } = Astro.props
+const petal = 'M0 0 C -6 -10, -2 -16, 0 -16 C 2 -16, 6 -10, 0 0 Z'
+const flower = (fills: string[]) => fills.map((fill, i) => ({ fill, turn: i * 72 }))
+---
+
+{
+  kind === 'sprig' ? (
+    <svg viewBox="0 0 110 190" aria-hidden="true" {...rest}>
+      <g fill="none" stroke="#286983" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M58 188 C 54 150, 64 118, 56 84 S 50 40, 62 14" />
+        <path d="M57 150 C 40 146, 26 134, 20 116 C 36 116, 50 128, 57 150 Z" />
+        <path d="M57 150 C 44 138, 32 128, 22 117" />
+        <path d="M59 124 C 74 118, 88 104, 92 86 C 76 90, 64 104, 59 124 Z" />
+        <path d="M59 124 C 70 110, 80 98, 91 87" />
+        <path d="M56 96 C 42 92, 32 80, 30 66 C 44 70, 52 80, 56 96 Z" />
+        <path d="M56 96 C 46 86, 38 76, 31 67" />
+        <path d="M56 62 C 66 56, 72 46, 72 34" />
+        <path d="M56 62 C 46 56, 40 48, 38 38" />
+      </g>
+      <g transform="translate(62 14)">
+        {flower(['#c9b8de', '#b9a5d3', '#c9b8de', '#a993c6', '#c9b8de']).map(({ fill, turn }) => <path d={petal} fill={fill} transform={`rotate(${turn})`} />)}
+        <circle r="2.2" fill="#ea9d34" />
+      </g>
+      <g transform="translate(72 34) scale(.62) rotate(20)">
+        {flower(['#e7b9bd', '#ddaab0', '#e7b9bd', '#ddaab0', '#e7b9bd']).map(({ fill, turn }) => <path d={petal} fill={fill} transform={`rotate(${turn})`} />)}
+        <circle r="2.4" fill="#ea9d34" />
+      </g>
+      <circle cx="38" cy="38" r="2.6" fill="#c9b8de" />
+    </svg>
+  ) : (
+    <svg viewBox="0 0 150 150" aria-hidden="true" {...rest}>
+      <g fill="none" stroke="#286983" stroke-width="0.9" stroke-linecap="round">
+        <path d="M10 140 C 40 110, 70 90, 120 40" />
+        <path d="M44 106 C 40 86, 46 70, 58 58" />
+        <path d="M74 80 C 92 78, 108 84, 120 96" />
+        <path d="M96 60 C 94 44, 100 30, 112 20" />
+        <path d="M30 122 C 22 114, 20 104, 22 94 C 30 100, 32 112, 30 122 Z" />
+        <path d="M86 70 C 96 62, 106 62, 116 66 C 108 74, 96 74, 86 70 Z" />
+      </g>
+      <g fill="#e5dcef"><circle cx="58" cy="58" r="4" /><circle cx="120" cy="96" r="3.4" /><circle cx="112" cy="20" r="3.6" /><circle cx="120" cy="40" r="4.4" fill="#f2d4d3" /></g>
+      <g fill="#ea9d34"><circle cx="58" cy="58" r="1.1" /><circle cx="120" cy="40" r="1.2" /></g>
+    </svg>
+  )
+}

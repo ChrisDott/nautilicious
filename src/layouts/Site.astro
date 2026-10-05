@@ -23,7 +23,7 @@
 // framework's theme, and the second silently replaces the `@theme` the first declared.
 import '../styles/global.css'
 
-import { getPath, getSingleton, type ResolvedSeo } from 'nautcms/content'
+import { getPath, type ResolvedSeo } from 'nautcms/content'
 
 type Props = ResolvedSeo
 
@@ -43,28 +43,17 @@ const siteName = 'Nautilicious'
 const share = image === undefined ? undefined : new URL(image, Astro.site ?? Astro.url)
 
 /**
- * **The site's chrome.** The CMS opens its read around this file, so this answers on every page of
- * the build and inside every preview, and it is one Entry rather than an array of one because a
- * header is a Type that says `singleton: true`.
- *
- * `null` until that Type exists and an editor has made its one Entry, so a fresh install renders no
- * header and builds clean. Write `src/components/Header.astro` with the fields your chrome needs,
- * fill it in, and edit the markup below to match — this line does not change.
- */
-const header = await getSingleton('header')
-
-/**
- * **Which page is being rendered**, which is the one thing the chrome cannot read off its own
- * props: it is rendered beside every page at once and is handed the fields of none of them. The nav
- * below is what it is for — `aria-current` on the item whose address is the page you are on.
- *
- * `Astro.url.pathname` is what this replaces and it is wrong exactly where a nav is looked at
- * most: inside the CMS a page is previewed at `/_cms/preview/<id>` on the admin's host, so a nav
- * built on it marks nothing current on any page an editor opens. This is the page's own Path in
- * both places, and it is the same string a link pointing at that page resolves to — so a nav read
- * out of content compares `link.href === here` and needs no normalising of its own.
+ * **Which page is being rendered**, for `aria-current` in the nav. `Astro.url.pathname` is wrong
+ * inside the CMS, where a page is previewed at `/_cms/preview/<id>`; this is the page's own Path in
+ * both places.
  */
 const here = await getPath()
+
+const nav = [
+  ['/cakes', 'Cakes'],
+  ['/celebrations', 'Celebrations'],
+  ['/visit', 'Visit us'],
+]
 ---
 
 <!doctype html>
@@ -78,18 +67,36 @@ const here = await getPath()
     {noindex && <meta name="robots" content="noindex" />}
     {canonical !== undefined && <link rel="canonical" href={canonical} />}
     {ogUrl !== undefined && <meta property="og:url" content={ogUrl} />}
+    <link rel="icon" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,500;1,400&family=Hanken+Grotesk:wght@400;500&family=Mrs+Saint+Delafield&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
-    {
-      header !== null && (
-        <header>
-          {header.tagline}
-          <nav>
-            <a href="/" aria-current={here === '/' ? 'page' : undefined}>Home</a>
-          </nav>
-        </header>
-      )
-    }
+    <header class="wrap flex items-baseline justify-between gap-6 pt-[22px] pb-[18px] max-sm:flex-col max-sm:gap-3">
+      <a class="flex items-baseline gap-3.5" href="/">
+        <span class="font-serif text-[26px] leading-none font-medium">Naut<i class="font-normal text-raspberry">ilicious</i></span>
+        <small class="text-xs text-ink-soft">Cakes, Kettlebury</small>
+      </a>
+      <nav class="flex gap-[26px] text-[13px]" aria-label="Main">
+        {nav.map(([href, label]) => <a class="nav" href={href} aria-current={here === href ? 'page' : undefined}>{label}</a>)}
+      </nav>
+    </header>
     <slot />
+    <footer class="wrap flex items-center justify-between gap-4 pt-8 pb-[30px] text-[12.5px] text-ink-soft max-sm:flex-col max-sm:items-start">
+      <span class="font-serif text-lg font-medium text-ink">Naut<i class="font-normal text-raspberry">ilicious</i></span>
+      <nav class="flex gap-[22px]" aria-label="Footer">
+        {nav.map(([href, label]) => <a href={href}>{label}</a>)}
+      </nav>
+      <span>Cakes, Kettlebury. Since 1998</span>
+    </footer>
   </body>
 </html>
+
+<style>
+  .nav { padding-block: 4px; border-bottom: 1px solid transparent; }
+  .nav:hover, .nav[aria-current='page'] { border-color: var(--color-raspberry); }
+</style>

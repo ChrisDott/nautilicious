@@ -1,0 +1,95 @@
+---
+import { boolean, defineSchema, image, repeat, text, type InferProps } from 'nautcms'
+import Media from './Media.astro'
+
+export const schema = defineSchema({
+  fits: ['page.body'],
+  fields: {
+    heading: text(),
+    items: repeat({
+      name: text(),
+      price: text(),
+      note: text().optional(),
+      photo: image(),
+      soldOut: boolean().default(false),
+    }),
+  },
+})
+
+type Props = InferProps<typeof schema>
+
+const { heading, items = [] } = Astro.props
+---
+
+<section class="products wrap">
+  <h2 class="heading">{heading}</h2>
+  <ul>
+    {
+      items.map((item) => (
+        <li class:list={[item.soldOut && 'sold']}>
+          <div class="photo">
+            {item.photo && <Media {...item.photo} />}
+            {item.soldOut && (
+              <span class="mark">
+                Sold out
+                <svg viewBox="0 0 200 18" preserveAspectRatio="none" aria-hidden="true"><path d="M4 12 C 50 4, 120 2, 196 9 C 150 8, 90 10, 40 16" /></svg>
+              </span>
+            )}
+          </div>
+          <div class="row">
+            <h3>{item.name}</h3>
+            <span class="price">{item.price}</span>
+          </div>
+          {item.note && <p>{item.note}</p>}
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .products { padding-top: 18px; padding-bottom: 64px; }
+  h2 { display: flex; align-items: center; gap: 18px; margin-bottom: 18px; }
+  h2::after { content: ''; flex: 1; height: 1px; background: var(--color-rule); }
+
+  /* Three across, the first column wider and the middle one dropped half a step. */
+  ul { display: grid; grid-template-columns: 1.22fr 1fr 1fr; gap: 28px; align-items: start; list-style: none; padding: 0; }
+  li:nth-child(3n + 2) { margin-top: 44px; }
+  .photo { position: relative; overflow: hidden; aspect-ratio: 1; border-radius: 3px; container-type: inline-size; background: var(--color-raspberry-sugar); }
+  li:nth-child(3n + 2) .photo { background: var(--color-lemon-sugar); }
+  li:nth-child(3n) .photo { background: var(--color-violet-sugar); }
+  .photo :global(img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+  .row { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-top: 14px; font-family: var(--font-serif); font-weight: 500; }
+  h3 { font-size: 22px; line-height: 1.1; }
+  .price { font-size: 21px; font-variant-numeric: oldstyle-nums; }
+  p { margin-top: 4px; font-size: 13px; color: var(--color-ink-soft); }
+
+  /* Sold out: the photo frosts over and the words are lettered across it. */
+  .sold .photo :global(img) { filter: grayscale(0.75) contrast(0.85); }
+  .sold .photo::after { content: ''; position: absolute; inset: 0; background: rgb(253 248 242 / 0.62); backdrop-filter: blur(1.5px); }
+  .mark {
+    position: absolute; z-index: 1; left: 50%; top: 50%; width: 92%; transform: translate(-50%, -54%) rotate(-11deg);
+    font-family: var(--font-script); font-size: 27cqi; line-height: 0.8; text-align: center; white-space: nowrap;
+    color: var(--color-raspberry); -webkit-text-stroke: 0.9px var(--color-raspberry);
+  }
+  .mark svg { display: block; width: 78%; height: 18px; margin: -2px auto 0; fill: none; stroke: var(--color-raspberry); stroke-width: 1.6; stroke-linecap: round; }
+  .sold h3, .sold p, .sold .price { color: var(--color-ink-soft); }
+  .sold .price { text-decoration: line-through 1px var(--color-raspberry); }
+  @media (prefers-reduced-motion: no-preference) {
+    .mark { animation: letter 1.2s cubic-bezier(0.3, 0.7, 0.2, 1) 0.3s both; }
+    @keyframes letter { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 -10% 0 0); } }
+  }
+
+  @media (min-width: 1200px) {
+    ul { gap: 44px; }
+    li:nth-child(3n + 2) { margin-top: 80px; }
+  }
+  @media (max-width: 640px) {
+    ul { grid-template-columns: 1fr 1fr; gap: 28px 18px; }
+    li:nth-child(3n + 1) { grid-column: 1 / -1; }
+    li:nth-child(3n + 2) { margin-top: 0; }
+    h3 { font-size: 19px; }
+    .price { font-size: 18px; }
+  }
+</style>

@@ -1,1 +1,55 @@
 @import "tailwindcss";
+
+/* Nautilicious. Rosé Pine Dawn, sugared: raspberry, lemon and violet icing on cream. */
+@theme {
+  --color-paper: #fdf8f2;
+  --color-sugar: #fffaf3;
+  --color-ink: #4a4470;
+  --color-ink-soft: #7c7698;
+  --color-rule: #e6d9d3;
+  --color-raspberry: #b4637a;
+  --color-raspberry-sugar: #f2d4d3;
+  --color-lemon-sugar: #f8e6c1;
+  --color-violet-sugar: #e5dcef;
+  --color-pine: #286983;
+  --font-serif: 'Cormorant', Georgia, serif;
+  --font-sans: 'Hanken Grotesk', system-ui, sans-serif;
+  --font-script: 'Mrs Saint Delafield', cursive;
+}
+
+@utility wrap {
+  max-width: 1240px;
+  margin-inline: auto;
+  padding-inline: 40px;
+  @media (width < 40rem) {
+    padding-inline: 22px;
+  }
+}
+
+/* A section heading: italic serif, the voice of every block. */
+@utility heading {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 2.125rem;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+}
+
+@layer base {
+  body {
+    @apply bg-paper text-ink font-sans antialiased;
+  }
+  a:focus-visible {
+    outline: 2px solid var(--color-raspberry);
+    outline-offset: 3px;
+  }
+}
+
+/* Rich text arrives from a child component, so a Type's scoped styles can't reach it. */
+.prose {
+  & p, & ul { margin-top: 1em; line-height: 1.7; }
+  & h3 { margin-top: 1.6em; font-family: var(--font-serif); font-size: 1.5rem; font-weight: 500; }
+  & ul { list-style: none; padding: 0; }
+  & li::before { content: ''; display: inline-block; width: 14px; height: 1px; margin-right: 10px; vertical-align: middle; background: var(--color-raspberry); }
+  & a { text-decoration: underline; text-decoration-color: var(--color-raspberry); text-underline-offset: 3px; }
+}

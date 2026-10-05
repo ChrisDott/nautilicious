@@ -6,18 +6,24 @@
  * here is lost, and `registry-stale` is what reports one that has not been made yet.
  */
 
+import Hero, { schema as heroSchema } from './components/Hero.astro'
 import Page, { schema as pageSchema } from './components/Page.astro'
+import Products, { schema as productsSchema } from './components/Products.astro'
 import Prose, { schema as proseSchema } from './components/Prose.astro'
 
 /** Every Type in the project, keyed by the name a Placement’s `_type` carries. */
 export const registry = {
+  hero: Hero,
   page: Page,
+  products: Products,
   prose: Prose,
 }
 
 /** Every Type as the Reader takes it: the schema its component exports, and where it came from. */
 export const types = [
+  { ...heroSchema, name: 'hero', file: 'src/components/Hero.astro' },
   { ...pageSchema, name: 'page', file: 'src/components/Page.astro' },
+  { ...productsSchema, name: 'products', file: 'src/components/Products.astro' },
   { ...proseSchema, name: 'prose', file: 'src/components/Prose.astro' },
 ]
 
@@ -28,7 +34,9 @@ export type SlotId =
 declare global {
   /** Every Type the generator found, keyed by name and valued by the schema its component exports. */
   interface NautTypes {
+    hero: typeof heroSchema
     page: typeof pageSchema
+    products: typeof productsSchema
     prose: typeof proseSchema
   }
 }

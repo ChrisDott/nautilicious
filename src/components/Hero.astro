@@ -1,0 +1,75 @@
+---
+import { defineSchema, image, link, select, text, type InferProps } from 'nautcms'
+import Media from './Media.astro'
+import Sprig from './Sprig.astro'
+
+export const schema = defineSchema({
+  fits: ['page.body'],
+  fields: {
+    heading: text(),
+    text: text({ multiline: true }),
+    image: image(),
+    button: link().optional(),
+    imageSide: select(['right', 'left']).default('right'),
+  },
+})
+
+type Props = InferProps<typeof schema>
+
+const { heading, text: standfirst, image: photo, button, imageSide = 'right' } = Astro.props
+---
+
+<section class="hero wrap" data-side={imageSide}>
+  <div class="copy">
+    <h1>{heading}</h1>
+    <p>{standfirst}</p>
+    {button && <a class="button" href={button.href}>{button.label}</a>}
+  </div>
+  <div class="picture">
+    <div class="arch">{photo && <Media {...photo} loading="eager" />}</div>
+    <Sprig class="sprig" />
+  </div>
+</section>
+
+<style>
+  .hero {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: end;
+    padding-top: 22px;
+  }
+  .copy { padding-bottom: 22px; }
+  h1 { font-family: var(--font-serif); font-size: 64px; line-height: 0.96; letter-spacing: -0.018em; text-wrap: balance; }
+  p { margin-top: 18px; max-width: 34ch; font-size: 15px; line-height: 1.6; color: var(--color-ink-soft); }
+  .button {
+    display: inline-block; margin-top: 22px; padding-bottom: 6px;
+    font-family: var(--font-serif); font-style: italic; font-size: 20px; line-height: 1; color: var(--color-raspberry);
+    border-bottom: 1px solid var(--color-raspberry);
+  }
+  .button:hover { border-bottom-width: 2px; }
+  .picture { position: relative; }
+  .arch {
+    position: relative; overflow: hidden; height: 310px; aspect-ratio: 4 / 5;
+    border-radius: 999px 999px 4px 4px; background: var(--color-raspberry-sugar);
+  }
+  .arch :global(img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .sprig { position: absolute; width: 110px; height: 190px; left: -64px; bottom: -14px; }
+
+  [data-side='left'] { grid-template-columns: auto minmax(0, 1fr); }
+  [data-side='left'] .copy { order: 2; }
+  [data-side='left'] .sprig { left: auto; right: -64px; transform: scaleX(-1); }
+
+  @media (min-width: 1200px) {
+    .hero { gap: 80px; padding-top: 48px; }
+    h1 { font-size: 84px; }
+    p { font-size: 17px; }
+    .arch { height: 520px; }
+  }
+  @media (max-width: 640px) {
+    .hero, [data-side='left'] { grid-template-columns: 1fr; gap: 26px; padding-top: 30px; }
+    [data-side='left'] .copy { order: 0; }
+    .copy { padding-bottom: 0; }
+    h1 { font-size: 46px; }
+    .picture { margin-left: 40px; }
+    .arch { height: auto; width: 100%; }
+    .sprig { left: -58px; width: 90px; height: 156px; }
+  }
+</style>

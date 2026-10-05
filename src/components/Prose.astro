@@ -2,10 +2,10 @@
 import { defineSchema, richText, text, type InferProps } from 'nautcms'
 import RichText from 'nautcms/content/RichText.astro'
 
-// Adopt it by adding `fits: ['page.body']`.
 export const schema = defineSchema({
+  fits: ['page.body'],
   fields: {
-    heading: text().optional(),
+    heading: text(),
     body: richText(),
   },
 })
@@ -15,7 +15,14 @@ type Props = InferProps<typeof schema>
 const { heading, body } = Astro.props
 ---
 
-<section>
-  {heading !== undefined && <h2>{heading}</h2>}
-  <RichText value={body} />
+<section class="wrap">
+  <div class="column">
+    <h2 class="heading">{heading}</h2>
+    <div class="prose"><RichText value={body} /></div>
+  </div>
 </section>
+
+<style>
+  section { padding-top: 56px; padding-bottom: 56px; }
+  .column { max-width: 620px; margin-inline: auto; font-size: 15px; }
+</style>
