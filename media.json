@@ -1,1 +1,47 @@
-{}
+{
+  "media/layer-cake-on-stand.jpg": {
+    "alt": "A tall layer cake on a cake stand, one slice out",
+    "width": 1600,
+    "height": 2000
+  },
+  "media/piping-icing.jpg": {
+    "alt": "Hands piping buttercream onto a cake",
+    "width": 1600,
+    "height": 2000
+  },
+  "media/two-tier-cake.jpg": {
+    "alt": "A two-tier cake with fresh flowers",
+    "width": 1600,
+    "height": 2000
+  },
+  "media/raspberry-layer-cake.jpg": {
+    "alt": "A slice of layer cake with pink buttercream",
+    "width": 1200,
+    "height": 1200
+  },
+  "media/lemon-drizzle.jpg": {
+    "alt": "A lemon drizzle loaf with white icing",
+    "width": 1200,
+    "height": 1200
+  },
+  "media/violet-cupcake.jpg": {
+    "alt": "A cupcake with violet buttercream",
+    "width": 1200,
+    "height": 1200
+  },
+  "media/chocolate-fudge.jpg": {
+    "alt": "A slice of dark chocolate fudge cake",
+    "width": 1200,
+    "height": 1200
+  },
+  "media/carrot-cake.jpg": {
+    "alt": "Carrot cake with cream cheese icing and walnuts",
+    "width": 1200,
+    "height": 1200
+  },
+  "media/pistachio-loaf.jpg": {
+    "alt": "A pistachio loaf with rose petals on top",
+    "width": 1200,
+    "height": 1200
+  }
+}
