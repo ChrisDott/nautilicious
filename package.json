@@ -13,6 +13,7 @@
     "typecheck": "astro check"
   },
   "dependencies": {
+    "@astrojs/vercel": "^11.0.12",
     "@tailwindcss/vite": "^4.3.3",
     "astro": "^7.3.5",
     "nautcms": "0.1.0-alpha.3",
